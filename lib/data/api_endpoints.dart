@@ -1,6 +1,6 @@
 class ApiEndPoint {
   static const String baseUrl =
-      'api-staging.roldrive.com'; // "api.roldrive.com";
+      'https://5f4e-115-187-63-97.ngrok-free.app'; // "api.roldrive.com";
 
   // static const String _devbaseUrl =
   //     'api-staging.roldrive.com'; //"api.roldrive.com";
@@ -61,14 +61,6 @@ class ApiEndPoint {
 }
 
 class SocketEndPoint {
-  // static String get baseUrl {
-  //   if (kReleaseMode) {
-  //     return _prodSocketbaseUrl;
-  //   } else {
-  //     return _devSocketbaseUrl;
-  //   }
-  // }
-
   static const String baseUrl =
       'wss://api-staging.roldrive.com/events'; // 'wss://api.roldrive.com/events';
 

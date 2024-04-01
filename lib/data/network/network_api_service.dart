@@ -1,40 +1,39 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
-
 import '../../const/app_constants.dart';
 import '../api_endpoints.dart';
 import '../app_exceptions.dart';
 import 'base_api_services.dart';
 
 class NetworkApiService extends BaseApiServices {
-  final StreamController<dynamic> _webSocketStreamController =
-      StreamController<dynamic>.broadcast();
   //------------------------get api response---------------------/
+
+  Map<String, String> headers = {
+    "Authorization": "Bearer ${AppConstants.bearerToken}",
+    "Accept": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
 
   @override
   Future getGetApiResponse(String path, Map<String, dynamic> queryParameter,
       [String baseUrl = ApiEndPoint.baseUrl]) async {
     dynamic responseJson;
     try {
-      final response = await http.get(
-          Uri.https(
-            baseUrl,
-            path,
-            queryParameter,
-          ),
-          headers: {
-            //TODO:Bearer api key to be stored in server (for security)
-            "Authorization": "Bearer ${AppConstants.bearerToken}",
-            "Accept": "application/json",
-            "Access-Control-Allow-Origin": "*",
-            'Access-Control-Allow-Headers': 'Content-Type',
-          }).timeout(
-        const Duration(seconds: 60),
-      );
+      final response = await http
+          .get(
+              Uri.https(
+                baseUrl,
+                path,
+                queryParameter,
+              ),
+              headers: headers)
+          .timeout(
+            const Duration(seconds: 60),
+          );
 
       responseJson = returnResponse(response);
     } on SocketException {
@@ -53,14 +52,7 @@ class NetworkApiService extends BaseApiServices {
       Response response = await post(
         Uri.https(ApiEndPoint.baseUrl, url),
         body: json.encode(data),
-        headers: {
-          "Accept": "application/json",
-          //'Access-Control-Allow-Headers': 'Content-Type',
-          "Access-Control-Allow-Origin": "*",
-          "content-type": "application/json",
-          "Authorization": "Bearer ${AppConstants.bearerToken}",
-          //------------//
-        },
+        headers: headers,
       ).timeout(
         const Duration(seconds: 60),
       );
@@ -89,14 +81,7 @@ class NetworkApiService extends BaseApiServices {
           url,
         ),
         body: json.encode(data),
-        headers: {
-          //TODO: api key to be stored in server (for security)
-          // "APIKey": "5567GGH67225HYVGG",
-          "Authorization": "Bearer ${AppConstants.bearerToken}",
-          "Accept": "application/json",
-          "content-type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
+        headers: headers,
       ).timeout(
         const Duration(seconds: 60),
       );
@@ -109,9 +94,6 @@ class NetworkApiService extends BaseApiServices {
     return responseJson;
   }
 
-  //-----------------------------------------------------------//
-
-  //--------------------------Delete api response-------------------//
   @override
   Future getDeleteApiResponse(String url, dynamic data) async {
     dynamic responseJson;
@@ -123,14 +105,7 @@ class NetworkApiService extends BaseApiServices {
           url,
         ),
         body: json.encode(data),
-        headers: {
-          //TODO: api key to be stored in server (for security)
-          // "APIKey": "5567GGH67225HYVGG",
-          "Accept": "application/json",
-          "Access-Control-Allow-Origin": "*",
-          "content-type": "application/json",
-          "Authorization": "Bearer ${AppConstants.bearerToken}",
-        },
+        headers: headers,
       ).timeout(
         const Duration(seconds: 60),
       );
@@ -155,13 +130,7 @@ class NetworkApiService extends BaseApiServices {
           url,
         ),
       );
-      request.headers.addAll({
-        "Accept": "application/json",
-        //'Access-Control-Allow-Headers': 'Content-Type',
-        "Access-Control-Allow-Origin": "*",
-        "content-type": "application/json",
-        "Authorization": "Bearer ${AppConstants.bearerToken}",
-      });
+      request.headers.addAll(headers);
       request.files.add(await MultipartFile.fromPath('file', image.path));
       request.fields.addAll(data);
       StreamedResponse streamResponse = await request.send().timeout(
@@ -223,20 +192,4 @@ class NetworkApiService extends BaseApiServices {
         );
     }
   }
-
-  @override
-  Future computeGetApiResponse(String path, Map<String, dynamic> queryParameter,
-      [String baseUrl = ApiEndPoint.baseUrl]) async {}
-
-  // @override
-  // Future<void> closeWebSocket() {
-  //   // TODO: implement closeWebSocket
-  //   throw UnimplementedError();
-  // }
-
-  // @override
-  // Stream listenToWebSocket() {
-  //   // TODO: implement listenToWebSocket
-
-  // }
 }
