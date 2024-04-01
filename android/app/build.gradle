@@ -65,6 +65,5 @@ flutter {
 }
 
 dependencies {
-    implementation "com.android.support.constraint:constraint-layout:2.1.4"
-    implementation 'com.airbnb.android:lottie:6.4.0'
+
 }

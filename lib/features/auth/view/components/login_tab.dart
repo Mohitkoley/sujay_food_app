@@ -12,9 +12,11 @@ class LoginTabWidget extends StatelessWidget {
   const LoginTabWidget({
     super.key,
     required this.phoneController,
+    required this.authController,
   });
 
   final TextEditingController phoneController;
+  final AuthController authController;
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +29,14 @@ class LoginTabWidget extends StatelessWidget {
             prefix: const Text("+91 ")),
         20.hBox,
         CommonButton(
-          text: "LogIn",
-          onPressed: () {
-            context.read<AuthController>().startResendOtpTimer();
-            context.router.pushNamed(RouteNames.otpScreen);
-          },
+          text: authController.isLoading ? "Loading..." : "Login",
+          onPressed: () => login(context),
         ),
       ],
     );
+  }
+
+  void login(BuildContext context) {
+    authController.sendOtp(context);
   }
 }

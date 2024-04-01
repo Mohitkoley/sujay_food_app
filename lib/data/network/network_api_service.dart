@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
-import '../../const/app_constants.dart';
+
 import '../api_endpoints.dart';
 import '../app_exceptions.dart';
 import 'base_api_services.dart';
@@ -12,24 +13,29 @@ class NetworkApiService extends BaseApiServices {
   //------------------------get api response---------------------/
 
   Map<String, String> headers = {
-    "Authorization": "Bearer ${AppConstants.bearerToken}",
     "Accept": "application/json",
     "Access-Control-Allow-Origin": "*",
-    'Access-Control-Allow-Headers': 'Content-Type',
+    "Content-Type": "application/json",
   };
 
   @override
-  Future getGetApiResponse(String path, Map<String, dynamic> queryParameter,
+  Future getApiResponse(String path, Map<String, dynamic> queryParameter,
       [String baseUrl = ApiEndPoint.baseUrl]) async {
     dynamic responseJson;
     try {
       final response = await http
           .get(
-              Uri.https(
-                baseUrl,
-                path,
-                queryParameter,
-              ),
+              kDebugMode
+                  ? Uri.http(
+                      baseUrl,
+                      path,
+                      queryParameter,
+                    )
+                  : Uri.https(
+                      baseUrl,
+                      path,
+                      queryParameter,
+                    ),
               headers: headers)
           .timeout(
             const Duration(seconds: 60),
@@ -45,12 +51,14 @@ class NetworkApiService extends BaseApiServices {
 
 //-----------------------get post api response-------------------//
   @override
-  Future getPostApiResponse(String url, dynamic data) async {
+  Future postApiResponse(String url, dynamic data) async {
     dynamic responseJson;
 
     try {
       Response response = await post(
-        Uri.https(ApiEndPoint.baseUrl, url),
+        kDebugMode
+            ? Uri.http(ApiEndPoint.baseUrl, url)
+            : Uri.https(ApiEndPoint.baseUrl, url),
         body: json.encode(data),
         headers: headers,
       ).timeout(
@@ -68,7 +76,7 @@ class NetworkApiService extends BaseApiServices {
   //--------------------------Put api response-------------------//
 
   @override
-  Future getPutApiResponse(
+  Future putApiResponse(
     String url,
     dynamic data,
   ) async {
@@ -76,10 +84,15 @@ class NetworkApiService extends BaseApiServices {
 
     try {
       Response response = await put(
-        Uri.https(
-          ApiEndPoint.baseUrl,
-          url,
-        ),
+        kDebugMode
+            ? Uri.http(
+                ApiEndPoint.baseUrl,
+                url,
+              )
+            : Uri.https(
+                ApiEndPoint.baseUrl,
+                url,
+              ),
         body: json.encode(data),
         headers: headers,
       ).timeout(
@@ -95,15 +108,20 @@ class NetworkApiService extends BaseApiServices {
   }
 
   @override
-  Future getDeleteApiResponse(String url, dynamic data) async {
+  Future deleteApiResponse(String url, dynamic data) async {
     dynamic responseJson;
 
     try {
       Response response = await delete(
-        Uri.https(
-          ApiEndPoint.baseUrl,
-          url,
-        ),
+        kDebugMode
+            ? Uri.http(
+                ApiEndPoint.baseUrl,
+                url,
+              )
+            : Uri.https(
+                ApiEndPoint.baseUrl,
+                url,
+              ),
         body: json.encode(data),
         headers: headers,
       ).timeout(
@@ -118,17 +136,22 @@ class NetworkApiService extends BaseApiServices {
   }
 
   @override
-  Future getPostMultiPartApiResponse(
+  Future postMultiPartApiResponse(
       String url, Map<String, String> data, File image) async {
     dynamic responseJson;
 
     try {
       var request = MultipartRequest(
         'POST',
-        Uri.https(
-          ApiEndPoint.baseUrl,
-          url,
-        ),
+        kDebugMode
+            ? Uri.http(
+                ApiEndPoint.baseUrl,
+                url,
+              )
+            : Uri.https(
+                ApiEndPoint.baseUrl,
+                url,
+              ),
       );
       request.headers.addAll(headers);
       request.files.add(await MultipartFile.fromPath('file', image.path));

@@ -1,11 +1,14 @@
 import 'dart:async';
-
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:food_deliver/features/auth/repository/aut_repository.dart';
+import 'package:food_deliver/routes/route_names.dart';
+import 'package:food_deliver/utils/extensions/util_extensions.dart';
 
 class AuthController extends ChangeNotifier {
   // text controllers
-  TextEditingController otp2Controller = TextEditingController();
   TextEditingController otp1Controller = TextEditingController();
+  TextEditingController otp2Controller = TextEditingController();
   TextEditingController otp3Controller = TextEditingController();
   TextEditingController otp4Controller = TextEditingController();
 
@@ -14,6 +17,9 @@ class AuthController extends ChangeNotifier {
   FocusNode otp2FocusNode = FocusNode();
   FocusNode otp3FocusNode = FocusNode();
   FocusNode otp4FocusNode = FocusNode();
+
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
 
   // resend otp counter
   int resendOtpCounter = 60;
@@ -61,5 +67,75 @@ class AuthController extends ChangeNotifier {
         notifyListeners();
       }
     });
+  }
+
+  clearOTPfields() {
+    otp1Controller.clear();
+    otp2Controller.clear();
+    otp3Controller.clear();
+    otp4Controller.clear();
+  }
+
+  clearfields() {
+    phoneController.clear();
+    nameController.clear();
+  }
+
+  // api calls
+  final AuthRepository _repo = AuthRepository();
+  String userCountryCode = '+91';
+  bool isLoading = false;
+
+  Future<void> sendOtp(BuildContext context) async {
+    try {
+      Map<String, dynamic> data = {
+        "userMobileNo": phoneController.text,
+        "userCountryCode": userCountryCode,
+      };
+      isLoading = true;
+      final res = await _repo.sendOTP(data);
+      if (res["status"] == "pending" && context.mounted) {
+        context.showSnackBar("OTP sent successfully");
+        startResendOtpTimer();
+        clearOTPfields();
+        isLoading = false;
+        context.router.pushNamed(RouteNames.otpScreen);
+      }
+      notifyListeners();
+    } catch (e) {
+      if (context.mounted) {
+        context.showSnackBar(e.toString());
+        isLoading = false;
+        notifyListeners();
+      }
+    }
+  }
+
+  Future<void> signUp(BuildContext context) async {
+    try {
+      Map<String, dynamic> data = {
+        "userMobileNo": phoneController.text,
+        "userCountryCode": userCountryCode,
+        "userName": nameController.text,
+        "otp": otp1Controller.text +
+            otp2Controller.text +
+            otp3Controller.text +
+            otp4Controller.text,
+      };
+      isLoading = true;
+      final res = await _repo.signUp(data);
+      if (res["status"] == "success" && context.mounted) {
+        context.showSnackBar("User registered successfully");
+        clearfields();
+        isLoading = false;
+        notifyListeners();
+      }
+    } catch (e) {
+      if (context.mounted) {
+        context.showSnackBar(e.toString());
+        isLoading = false;
+        notifyListeners();
+      }
+    }
   }
 }

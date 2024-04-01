@@ -1,22 +1,22 @@
 import 'dart:io';
 
 abstract class BaseApiServices {
-  Future<dynamic> getGetApiResponse(
+  Future<dynamic> getApiResponse(
       String path, Map<String, dynamic> queryParameter,
       [String baseUrl]);
 
-  Future<dynamic> getPostApiResponse(String url, dynamic data);
+  Future<dynamic> postApiResponse(String url, dynamic data);
 
-  Future<dynamic> getPutApiResponse(
+  Future<dynamic> putApiResponse(
     String url,
     dynamic data,
   );
 
-  Future<dynamic> getDeleteApiResponse(
+  Future<dynamic> deleteApiResponse(
     String url,
     dynamic data,
   );
 
-  Future<dynamic> getPostMultiPartApiResponse(
+  Future<dynamic> postMultiPartApiResponse(
       String url, Map<String, String> data, File image);
 }
