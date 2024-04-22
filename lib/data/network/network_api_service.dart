@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
-
 import '../api_endpoints.dart';
 import '../app_exceptions.dart';
 import 'base_api_services.dart';
@@ -179,10 +178,14 @@ class NetworkApiService extends BaseApiServices {
   dynamic returnResponse(http.Response response) {
     Map<String, dynamic> error =
         jsonDecode(response.body) as Map<String, dynamic>;
+
+    // final errorMessage = (error['message'] as List<dynamic>).first;
+
     switch (response.statusCode) {
       case 200:
         // dynamic responseJson = response.body;
         dynamic responseJson = jsonDecode(response.body);
+
         return responseJson;
       case 400:
         throw BadRequestException(

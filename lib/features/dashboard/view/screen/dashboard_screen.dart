@@ -41,13 +41,13 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
         child: Column(
           children: [
-            FoodHeader(
+            const FoodHeader(
               color: Colors.green,
               title: "Veg",
             ),
             FoodListWidget(),
             20.hBox,
-            FoodHeader(
+            const FoodHeader(
               color: Colors.red,
               title: "Non-Veg",
             ),

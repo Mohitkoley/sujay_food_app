@@ -93,15 +93,15 @@ class AuthController extends ChangeNotifier {
         "userCountryCode": userCountryCode,
       };
       isLoading = true;
-      final res = await _repo.sendOTP(data);
-      if (res["status"] == "pending" && context.mounted) {
+      await _repo.sendOTP(data);
+      startResendOtpTimer();
+      clearOTPfields();
+      isLoading = false;
+      notifyListeners();
+      if (context.mounted) {
         context.showSnackBar("OTP sent successfully");
-        startResendOtpTimer();
-        clearOTPfields();
-        isLoading = false;
         context.router.pushNamed(RouteNames.otpScreen);
       }
-      notifyListeners();
     } catch (e) {
       if (context.mounted) {
         context.showSnackBar(e.toString());
@@ -111,12 +111,13 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  Future<void> signUp(BuildContext context) async {
+  Future<void> verifyOtp(BuildContext context) async {
     try {
       Map<String, dynamic> data = {
         "userMobileNo": phoneController.text,
         "userCountryCode": userCountryCode,
-        "userName": nameController.text,
+        "firstName": "mohit",
+        "lastName": "koley",
         "otp": otp1Controller.text +
             otp2Controller.text +
             otp3Controller.text +
@@ -124,12 +125,8 @@ class AuthController extends ChangeNotifier {
       };
       isLoading = true;
       final res = await _repo.signUp(data);
-      if (res["status"] == "success" && context.mounted) {
-        context.showSnackBar("User registered successfully");
-        clearfields();
-        isLoading = false;
-        notifyListeners();
-      }
+      isLoading = false;
+      notifyListeners();
     } catch (e) {
       if (context.mounted) {
         context.showSnackBar(e.toString());

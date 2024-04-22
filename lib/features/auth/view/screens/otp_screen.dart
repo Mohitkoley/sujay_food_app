@@ -83,13 +83,16 @@ class _OTPScreenState extends State<OTPScreen> {
                   else
                     TextButton(
                       child: const Text("Resend OTP"),
-                      onPressed: () {},
+                      onPressed: () {
+                        authController.startResendOtpTimer();
+                      },
                     ),
                   40.hBox,
                   CommonButton(
-                      text: "Verify",
+                      text: authController.isLoading ? "Loading..." : "Verify",
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
+                          // authController.verifyOtp(context);
                           context.router.pushNamed(RouteNames.dashBoardScreen);
                         }
                       })

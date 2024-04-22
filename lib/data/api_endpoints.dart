@@ -4,10 +4,4 @@ class ApiEndPoint {
   static const String signUp = '/api/v1/auth/signup';
 }
 
-class SocketEndPoint {
-  static const String baseUrl =
-      'wss://api-staging.roldrive.com/events'; // 'wss://api.roldrive.com/events';
-
-  // static const String _devSocketbaseUrl =
-  //     'wss://api-staging.roldrive.com/events';
-}
+class SocketEndPoint {}
